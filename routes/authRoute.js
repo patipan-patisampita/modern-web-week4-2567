@@ -1,31 +1,32 @@
 import express from 'express'
 import User from '../models/userModel.js'
 import bcrypt from 'bcryptjs'
+import { guestRoute, protectedRoute } from '../middleware/authMiddleware.js'
 
 const router = express.Router()
 
 //Route for the Login page
-router.get('/login', (req, res) => {
-    res.render('login', { title: 'Login Page' })
+router.get('/login', guestRoute, (req, res) => {
+    res.render('login', { title: 'Login Page', active: 'login' })
 })
 
 //Route for the Register page
-router.get('/register', (req, res) => {
-    res.render('register', { title: 'Register Page' })
+router.get('/register', guestRoute, (req, res) => {
+    res.render('register', { title: 'Register Page', active: 'register' })
 })
 
 //Route for the Forgot Password page
-router.get('/forgot-password', (req, res) => {
-    res.render('forgot-password', { title: 'Forgot-password Page' })
+router.get('/forgot-password', guestRoute, (req, res) => {
+    res.render('forgot-password', { title: 'Forgot-password Page', active: 'forgot' })
 })
 
 //Route for the Reset Password page
-router.get('/reset-password', (req, res) => {
-    res.render('reset-password', { title: 'Reset-password Page' })
+router.get('/reset-password', guestRoute, (req, res) => {
+    res.render('reset-password', { title: 'Reset-password Page', active: 'reset' })
 })
 
 //Route: Handle user for the register page
-router.post('/register', async (req, res) => {
+router.post('/register', guestRoute, async (req, res) => {
     // console.log(req.body)
     const { name, email, password } = req.body
     try {
@@ -53,7 +54,7 @@ router.post('/register', async (req, res) => {
 })
 
 //Route: Handle user for the login page
-router.post('/login', async (req, res) => {
+router.post('/login', guestRoute, async (req, res) => {
     const { email, password } = req.body
 
     try {
@@ -76,8 +77,14 @@ router.post('/login', async (req, res) => {
 })
 
 //Route for the Profile page
-router.get('/profile', (req, res) => {
-    return res.render('profile', { title: 'Profile Page' })
+router.get('/profile', protectedRoute, (req, res) => {
+    return res.render('profile', { title: 'Profile Page', active: 'profile' })
+})
+
+//Handle user logout
+router.post('/logout', (req, res) => {
+    req.session.destroy()
+    return res.redirect('/login')
 })
 
 export default router

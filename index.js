@@ -49,7 +49,7 @@ app.set('view engine', 'ejs')
 
 //Route for the Home page: http://localhost/3000
 app.get('/', (req, res) => {
-    res.render('index', { title: 'Home Page' })
+    res.render('index', { title: 'Home Page', active: 'home' })
 })
 
 app.use('/', authRoute)
